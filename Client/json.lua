@@ -1,9 +1,10 @@
 ------------------------------------------------------------------ utils
-local controls = {["\n"]="\\n", ["\r"]="\\r", ["\t"]="\\t", ["\b"]="\\b", ["\f"]="\\f", ["\""]="\\\"", ["\\"]="\\\\"}
- 
+local controls = { ["\n"] = "\\n",["\r"] = "\\r",["\t"] = "\\t",["\b"] = "\\b",["\f"] = "\\f",["\""] = "\\\"",
+    ["\\"] = "\\\\" }
+
 local function isArray(t)
     local max = 0
-    for k,v in pairs(t) do
+    for k, v in pairs(t) do
         if type(k) ~= "number" then
             return false
         elseif k > max then
@@ -12,34 +13,34 @@ local function isArray(t)
     end
     return max == #t
 end
- 
-local whites = {['\n']=true; ['\r']=true; ['\t']=true; [' ']=true; [',']=true; [':']=true}
+
+local whites = { ['\n'] = true,['\r'] = true,['\t'] = true,[' '] = true,[','] = true,[':'] = true }
 function removeWhite(str)
     while whites[str:sub(1, 1)] do
         str = str:sub(2)
     end
     return str
 end
- 
+
 ------------------------------------------------------------------ encoding
- 
+
 local function encodeCommon(val, pretty, tabLevel, tTracking)
     local str = ""
- 
+
     -- Tabbing util
     local function tab(s)
         str = str .. ("\t"):rep(tabLevel) .. s
     end
- 
+
     local function arrEncoding(val, bracket, closeBracket, iterator, loopFunc)
         str = str .. bracket
         if pretty then
             str = str .. "\n"
             tabLevel = tabLevel + 1
         end
-        for k,v in iterator(val) do
+        for k, v in iterator(val) do
             tab("")
-            loopFunc(k,v)
+            loopFunc(k, v)
             str = str .. ","
             if pretty then str = str .. "\n" end
         end
@@ -53,26 +54,26 @@ local function encodeCommon(val, pretty, tabLevel, tTracking)
         end
         tab(closeBracket)
     end
- 
+
     -- Table encoding
     if type(val) == "table" then
         assert(not tTracking[val], "Cannot encode a table holding itself recursively")
         tTracking[val] = true
         if isArray(val) then
-            arrEncoding(val, "[", "]", ipairs, function(k,v)
+            arrEncoding(val, "[", "]", ipairs, function(k, v)
                 str = str .. encodeCommon(v, pretty, tabLevel, tTracking)
             end)
         else
-            arrEncoding(val, "{", "}", pairs, function(k,v)
+            arrEncoding(val, "{", "}", pairs, function(k, v)
                 assert(type(k) == "string", "JSON object keys must be strings", 2)
                 str = str .. encodeCommon(k, pretty, tabLevel, tTracking)
                 str = str .. (pretty and ": " or ":") .. encodeCommon(v, pretty, tabLevel, tTracking)
             end)
         end
-    -- String encoding
+        -- String encoding
     elseif type(val) == "string" then
         str = '"' .. val:gsub("[%c\"\\]", controls) .. '"'
-    -- Number encoding
+        -- Number encoding
     elseif type(val) == "number" or type(val) == "boolean" then
         str = tostring(val)
     else
@@ -80,22 +81,22 @@ local function encodeCommon(val, pretty, tabLevel, tTracking)
     end
     return str
 end
- 
+
 function encode(val)
     return encodeCommon(val, false, 0, {})
 end
- 
+
 function encodePretty(val)
     return encodeCommon(val, true, 0, {})
 end
- 
+
 ------------------------------------------------------------------ decoding
- 
+
 local decodeControls = {}
-for k,v in pairs(controls) do
+for k, v in pairs(controls) do
     decodeControls[v] = k
 end
- 
+
 function parseBoolean(str)
     if str:sub(1, 4) == "true" then
         return true, removeWhite(str:sub(5))
@@ -103,12 +104,12 @@ function parseBoolean(str)
         return false, removeWhite(str:sub(6))
     end
 end
- 
+
 function parseNull(str)
     return nil, removeWhite(str:sub(5))
 end
- 
-local numChars = {['e']=true; ['E']=true; ['+']=true; ['-']=true; ['.']=true}
+
+local numChars = { ['e'] = true,['E'] = true,['+'] = true,['-'] = true,['.'] = true }
 function parseNumber(str)
     local i = 1
     while numChars[str:sub(i, i)] or tonumber(str:sub(i, i)) do
@@ -118,30 +119,30 @@ function parseNumber(str)
     str = removeWhite(str:sub(i))
     return val, str
 end
- 
+
 function parseString(str)
     str = str:sub(2)
     local s = ""
-    while str:sub(1,1) ~= "\"" do
-        local next = str:sub(1,1)
+    while str:sub(1, 1) ~= "\"" do
+        local next = str:sub(1, 1)
         str = str:sub(2)
         assert(next ~= "\n", "Unclosed string")
- 
+
         if next == "\\" then
-            local escape = str:sub(1,1)
+            local escape = str:sub(1, 1)
             str = str:sub(2)
- 
-            next = assert(decodeControls[next..escape], "Invalid escape character")
+
+            next = assert(decodeControls[next .. escape], "Invalid escape character")
         end
- 
+
         s = s .. next
     end
     return s, removeWhite(str:sub(2))
 end
- 
+
 function parseArray(str)
     str = removeWhite(str:sub(2))
- 
+
     local val = {}
     local i = 1
     while str:sub(1, 1) ~= "]" do
@@ -154,10 +155,10 @@ function parseArray(str)
     str = removeWhite(str:sub(2))
     return val, str
 end
- 
+
 function parseObject(str)
     str = removeWhite(str:sub(2))
- 
+
     local val = {}
     while str:sub(1, 1) ~= "}" do
         local k, v = nil, nil
@@ -168,7 +169,7 @@ function parseObject(str)
     str = removeWhite(str:sub(2))
     return val, str
 end
- 
+
 function parseMember(str)
     local k = nil
     k, str = parseValue(str)
@@ -176,7 +177,7 @@ function parseMember(str)
     val, str = parseValue(str)
     return k, val, str
 end
- 
+
 function parseValue(str)
     local fchar = str:sub(1, 1)
     if fchar == "{" then
@@ -194,13 +195,13 @@ function parseValue(str)
     end
     return nil
 end
- 
+
 function decode(str)
     str = removeWhite(str)
     t = parseValue(str)
     return t
 end
- 
+
 function decodeFromFile(path)
     local file = assert(fs.open(path, "r"))
     local decoded = decode(file.readAll())

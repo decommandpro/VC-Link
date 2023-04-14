@@ -1,9 +1,4 @@
-function merge(ab, a, b)
-  table.foreach(a, function(k, v) table.insert(ab, v) end)
-  table.foreach(b, function(k, v) table.insert(ab, v) end)
-end
-
-function socket()
+local function socket()
   local i = 0
   while true do
     repeat
@@ -19,7 +14,7 @@ function socket()
   end
 end
 
-function speakerLoop()
+local function speakerLoop()
   local i = 0
   while true do
     i=i+1

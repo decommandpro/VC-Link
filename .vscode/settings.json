@@ -1,0 +1,33 @@
+{
+    "Lua.diagnostics.globals": [
+        "decodeFromFile",
+        "decode",
+        "parseValue",
+        "parseMember",
+        "parseObject",
+        "parseArray",
+        "parseString",
+        "parseNull",
+        "parseNumber",
+        "parseBoolean",
+        "encodePretty",
+        "encode",
+        "removeWhite",
+        "t",
+        "fs",
+        "buffer",
+        "parallel",
+        "speaker",
+        "peripheral",
+        "http",
+        "err",
+        "ws",
+        "sleep",
+        "json"
+    ],
+    "Lua.diagnostics.disable": [
+        "need-check-nil",
+        "deprecated",
+        "undefined-field"
+    ]
+}
