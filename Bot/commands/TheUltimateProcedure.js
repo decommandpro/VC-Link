@@ -1,9 +1,10 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { Client, SlashCommandBuilder } = require("discord.js");
 const WebSocket = require("ws")
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior, EndBehaviorType, entersState, VoiceReceiver, VoiceConnectionStatus } = require("@discordjs/voice");
 const fs = require("fs")
 const prism = require("prism-media")
 const { OpusEncoder } = require("@discordjs/opus");
+const { client } = require("tenorjs");
 
 
 
@@ -135,16 +136,6 @@ function createListeningStream(receiver, userId, wss) {
         },
     });
 
-    const oggStream = new prism.opus.OggLogicalBitstream({
-        opusHead: new prism.opus.OpusHead({
-            channelCount: 2,
-            sampleRate: 48000,
-        }),
-        pageSizeControl: {
-            maxPackets: 10,
-        },
-        crc: false
-    });
 
     let chunks = []
     opusStream.on("readable", () => {
@@ -152,7 +143,7 @@ function createListeningStream(receiver, userId, wss) {
 
         /*const interval = setInterval(() => {
             const PCM = decodeToPCM(chunks)
-            //wss.broadcast(PCM)
+            wss.broadcast(PCM)
             console.log(PCM)
         }, 2000);*/
 
@@ -202,16 +193,16 @@ module.exports = {
         await interaction.deferReply()
         interaction.followUp("Starting WebSocket Server")
 
-        const wss = new WebSocket.WebSocketServer({
+        Client.wss = new WebSocket.WebSocketServer({
             port: 8082
         })
 
-        wss.on("connection", async (ws) => {
+        Client.wss.on("connection", async (ws) => {
             interaction.followUp("New Connection To Websocket Server")
         })
 
-        wss.broadcast = (msg) => {
-            wss.clients.forEach((client) => {
+        Client.wss.broadcast = (msg) => {
+            Client.wss.clients.forEach((client) => {
                 client.send(msg)
             })
         }
@@ -231,7 +222,7 @@ module.exports = {
 
         connection.receiver.speaking.on("start", (userId) => {
             if (userId != interaction.member.id) { return }
-            createListeningStream(connection.receiver, userId, wss)
+            createListeningStream(connection.receiver, userId, Client.wss)
         })
     }
 }
