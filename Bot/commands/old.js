@@ -76,50 +76,9 @@ function decodeToPCM(chunks) {
     //fs.writeFile("test.txt", JSON.stringify(OUT2), function (err) { if (err) { console.error(err) } })
 
 
-    //console.log(OUT2)
     return OUT2
 
 
-}
-
-
-
-
-
-function decodeChunkToPCM(chunk) {
-    const encoder = new OpusEncoder(48000, 2)
-
-    let decodedChunk = pcmBufferTo8Bit(encoder.decode(chunk))
-
-    console.log("NEW")
-    console.log(chunk)
-    console.log(encoder.decode(chunk))
-    //console.log(decodedChunk)
-    //console.log("DECODEDCHUNK")
-    //console.log(decodedChunk)
-
-    let OUT
-    const outputBuffer = decodedChunk
-    const outputArray = [];
-
-    for (let i = 0; i < outputBuffer.length; i++) {
-        const value = outputBuffer.readInt8(i);
-        outputArray.push(value);
-    }
-    OUT = outputArray
-    //console.log(OUT)
-    let OUT2
-    for (let i = 0, j = 0; i < OUT.length; i += 2, j += 1) {
-        const left = OUT[i]
-        const right = OUT[i + 2]
-        const mono = Math.round((left + right) / 2)
-        OUT2 = mono
-    }
-
-    //console.log(OUT2)
-    return OUT2
-
-    //fs.writeFile("test.txt", JSON.stringify(OUT2), function (err) { if (err) { console.error(err) } })
 }
 
 
@@ -187,7 +146,7 @@ function createListeningStream(receiver, userId, wss) {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("theultimateprocedure")
+        .setName("old")
         .setDescription("Starts Discord-CC VC Relay"),
     async execute(interaction) {
         await interaction.deferReply()
