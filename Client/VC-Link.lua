@@ -1,4 +1,5 @@
 local args = { ... }
+local buffer = {}
 os.loadAPI("json")
 local speaker = peripheral.find("speaker")
 if not speaker then error("Unable to Find Speaker") end
@@ -21,13 +22,21 @@ local function socket()
 end
 
 local function speakerLoop()
-    local i = 0
+    local i = 1
     while true do
-        i = i + 1
+        local sound = {}
         repeat sleep() until buffer[i]
-        while not speaker.playAudio(buffer[i], 30) do
+        sleep(0.2)
+        
+        for j=0, #buffer-i do
+            for k, v in pairs(buffer[i+j]) do
+                table.insert(sound, v)
+            end
+        end
+        while not speaker.playAudio(sound, 3000) do
             os.pullEvent("speaker_audio_empty")
         end
+        i = #buffer
     end
 end
 
@@ -40,7 +49,5 @@ if not ws then error(err) end
 
 print("Connected to Websocket, Ready and Listening!")
 
-
-buffer = {}
 
 parallel.waitForAny(socket, speakerLoop)
