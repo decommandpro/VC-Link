@@ -8,6 +8,6 @@ module.exports = {
 	async execute(interaction) {
         getVoiceConnection(interaction.guild.id).destroy();
         Client.wss.close()
-        interaction.reply("Stopped the Websocket and Left the Channel")
+        interaction.reply("Closed the Websocket and Left the Channel")
 	},
 }
