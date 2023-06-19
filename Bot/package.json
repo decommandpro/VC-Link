@@ -11,14 +11,9 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
-    "cargo-cp-artifact": "^0.1.8",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "libsodium-wrappers": "^0.7.11",
-    "node-crc": "^2.0.13",
-    "prism-media": "^2.0.0-alpha.0",
-    "reddit": "^1.2.1",
-    "tenorjs": "^1.0.10",
     "ws": "^8.13.0"
   }
 }

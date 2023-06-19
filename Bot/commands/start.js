@@ -1,14 +1,7 @@
 const { Client, SlashCommandBuilder } = require("discord.js");
 const WebSocket = require("ws")
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior, EndBehaviorType, entersState, VoiceReceiver, VoiceConnectionStatus } = require("@discordjs/voice");
-const fs = require("fs")
-const prism = require("prism-media")
 const { OpusEncoder } = require("@discordjs/opus");
-const { client } = require("tenorjs");
-
-
-
-
 
 
 
@@ -84,10 +77,10 @@ function createListeningStream(receiver, userId, wss) {
 
     let chunks = []
     const empty = "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,null]"
-
+    const encoder = new OpusEncoder(48000, 2);
     opusStream.on("readable", () => {
         let chunk;
-        const encoder = new OpusEncoder(48000, 2);
+
         while (null !== (chunk = opusStream.read())) {
 
             const pcmBuffer = encoder.decode(chunk);
@@ -101,27 +94,6 @@ function createListeningStream(receiver, userId, wss) {
             }
         }
     })
-
-
-    /*opusStream.on("end", () => {
-        const encoder = new OpusEncoder(48000, 2)
-
-        let PCMBuffers = []
-        chunks.forEach((v) => {
-            PCMBuffers.push(encoder.decode(v))
-        })
-
-        const buffers = pcmBuffersTo8Bit(PCMBuffers)
-        const finalDecoded = buffersToMonoArray(buffers)
-
-
-
-        const chunkSize = 3000;
-        for (let i = 0; i < finalDecoded.length; i += chunkSize) {
-            const chunk = finalDecoded.slice(i, i + chunkSize);
-            wss.broadcast(JSON.stringify(chunk))
-        }
-    })*/
 }
 
 
@@ -151,7 +123,7 @@ module.exports = {
         })
 
         Client.wss.on("connection", async (ws) => {
-            interaction.followUp("New Connection To Websocket Server")
+            interaction.channel.send("New Connection To Websocket Server")
         })
 
         Client.wss.broadcast = (msg) => {
@@ -160,7 +132,7 @@ module.exports = {
             })
         }
 
-        interaction.followUp("WebSocket Server Started, Joining Voice Channel")
+        interaction.channel.send("WebSocket Server Started, Joining Voice Channel")
 
         const connection = joinVoiceChannel({
             channelId: interaction.member.voice.channel.id,
@@ -171,7 +143,7 @@ module.exports = {
 
         await entersState(connection, VoiceConnectionStatus.Ready, 20e3)
 
-        interaction.followUp("Joined Voice Channel, Ready And Listening!")
+        interaction.channel.send("Joined Voice Channel, Ready And Listening!")
 
         connection.receiver.speaking.on("start", (userId) => {
             if (userId != interaction.member.id) { return }
